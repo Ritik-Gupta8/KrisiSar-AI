@@ -1,0 +1,82 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+ENV/
+.venv
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+*.egg-info/
+
+# PWA generated artifacts (regenerated on every build)
+**/public/sw.js
+**/public/sw.js.map
+**/public/workbox-*.js
+**/public/worker-*.js
+**/public/fallback-*.js
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.production
+*.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Testing
+coverage/
+.coverage
+*.cover
+.pytest_cache/
+.nyc_output/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+prisma/migrations/
+
+# Google Cloud / secrets (only ignore credential files, NOT all json)
+service-account*.json
+credentials*.json
+*-credentials.json
+gcp-*.json
+*.pem
+*.key
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Temp files
+*.tmp
+*.temp
+.cache/
+.parcel-cache/
+
+# OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini

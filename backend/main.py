@@ -1,0 +1,102 @@
+"""
+KrisiSar AI - FastAPI Backend
+Main entry point for the AI-powered Farm Decision Intelligence Platform
+"""
+
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+import uvicorn
+from dotenv import load_dotenv
+import os
+
+# Load environment variables
+load_dotenv()
+
+# Import routers
+from api.routes import (
+    diagnosis,
+    weather,
+    risk_score,
+    recommendations,
+    schemes,
+    chat,
+    analytics,
+    alerts
+)
+
+# Initialize FastAPI app
+app = FastAPI(
+    title="KrisiSar AI API",
+    description="AI-Powered Farm Decision Intelligence Platform",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+)
+
+# CORS configuration
+origins = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "https://krisisar-ai.vercel.app",
+    # Add production URLs
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Health check endpoint
+@app.get("/")
+async def root():
+    return {
+        "message": "KrisiSar AI API",
+        "version": "1.0.0",
+        "status": "operational",
+        "docs": "/docs"
+    }
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for monitoring"""
+    return {
+        "status": "healthy",
+        "service": "krisisar-ai-backend",
+        "version": "1.0.0"
+    }
+
+# Include routers
+app.include_router(diagnosis.router, prefix="/api/v1/diagnosis", tags=["Diagnosis"])
+app.include_router(weather.router, prefix="/api/v1/weather", tags=["Weather"])
+app.include_router(risk_score.router, prefix="/api/v1/risk", tags=["Risk Score"])
+app.include_router(recommendations.router, prefix="/api/v1/recommendations", tags=["Recommendations"])
+app.include_router(schemes.router, prefix="/api/v1/schemes", tags=["Government Schemes"])
+app.include_router(chat.router, prefix="/api/v1/chat", tags=["Chat"])
+app.include_router(analytics.router, prefix="/api/v1/analytics", tags=["Analytics"])
+app.include_router(alerts.router, prefix="/api/v1/alerts", tags=["Alerts"])
+
+# Global exception handler
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "Internal server error",
+            "message": str(exc),
+            "type": type(exc).__name__
+        }
+    )
+
+if __name__ == "__main__":
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=port,
+        reload=True,
+        log_level="info"
+    )
