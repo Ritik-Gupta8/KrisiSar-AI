@@ -2,519 +2,183 @@
 
 **AI-Powered Farm Decision Intelligence Platform**
 
-[![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19-blue)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)](https://www.typescriptlang.org/)
-[![Python](https://img.shields.io/badge/Python-3.11-green)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-teal)](https://fastapi.tiangolo.com/)
-[![Gemini](https://img.shields.io/badge/Gemini-2.5-orange)](https://ai.google.dev/)
+> Built for the Google Gen AI Academy — Decision Intelligence Hackathon
 
-> **Google Gen AI Academy Cohort 2 - Decision Intelligence Hackathon**
-
-KrisiSar AI empowers millions of farmers with AI-driven decisions by unifying fragmented agricultural data into actionable intelligence.
+KrisiSar AI turns fragmented agricultural data into clear, actionable decisions for farmers. Instead of raw numbers, farmers get answers: *should I spray today, irrigate, or worry about this leaf?* The platform combines Google Gemini, a BigQuery data pipeline, NVIDIA RAPIDS GPU acceleration, and a Looker Studio dashboard.
 
 ---
 
-## 🎯 Problem Statement
+## 🎯 Problem → Solution
 
-Farmers rely on scattered information sources:
-- Weather apps, YouTube videos, WhatsApp groups
-- Local pesticide dealers, government websites
-- Personal experience
+**Problem.** Farmers rely on scattered sources — weather apps, YouTube, WhatsApp, local dealers. This fragmentation drives poor decisions on irrigation, pesticides, disease management, and crop planning.
 
-This fragmentation leads to poor decisions on:
-- ❌ Irrigation timing
-- ❌ Pesticide application
-- ❌ Disease management
-- ❌ Fertilizer usage
-- ❌ Crop planning
-
-**KrisiSar AI unifies everything into one intelligent platform.**
+**Solution.** One platform that unifies the data and returns decisions:
+- 📸 Crop disease diagnosis from a photo (Gemini Vision)
+- 🎯 Farm risk score (0–100)
+- 🌤️ Weather intelligence + irrigation advice
+- 💬 Multilingual AI chat
+- 🏛️ Government scheme discovery
+- 📊 Analytics dashboard over 500K farm records (BigQuery + Looker)
 
 ---
 
-## 🚀 Core Features
+## 🏆 Hackathon alignment (Data Intelligence + Acceleration)
 
-### 1. 📸 Crop Image Diagnosis
-- Upload crop/leaf images
-- Gemini Vision analyzes disease, pests, deficiencies
-- Returns disease name, confidence, severity, treatment
-
-### 2. 🎯 Farm Risk Score (0-100)
-Real-time risk assessment combining:
-- Weather patterns
-- Disease prevalence
-- Crop health
-- Historical data
-
-### 3. 🧠 Decision Cards
-Instead of raw data, farmers get **actionable recommendations**:
-```
-✅ Spray pesticide tomorrow morning
-❌ Avoid irrigation (rain expected)
-⚠️ Humidity high - disease risk increasing
-```
-
-### 4. 🌤️ Weather Intelligence
-- Current conditions + 7-day forecast
-- Disease spread prediction
-- Irrigation recommendations
-
-### 5. 🏛️ Government Schemes
-AI-powered scheme discovery:
-- PM-Kisan, Crop Insurance, Subsidies
-- Eligibility checker
-- Application process guidance
-
-### 6. 💬 Ask KrisiSar (Multilingual AI Chat)
-- Supports: English, Hindi, Marathi, Tamil, Telugu
-- Natural language queries
-- Context-aware responses
-
-### 7. 📊 Analytics Dashboard
-- Disease trends and heatmaps
-- Farm health scoring
-- Predictive analytics
-- BigQuery + Looker Studio integration
-
-### 8. 🎤 Voice Assistant
-- Speech-to-text input
-- Text-to-speech responses
-- Browser-based (no external APIs)
-
-### 9. 📴 Offline Mode (PWA)
-- Service worker caching
-- Offline functionality
-- Sync when online
-
-### 10. 🔔 Smart Alerts
-- Rain predictions
-- Disease outbreak warnings
-- High-risk notifications
+| Requirement | How KrisiSar AI meets it |
+|---|---|
+| Real user + problem | Farmers making irrigation / pesticide / risk decisions |
+| Decision that depends on data | Risk score, disease action, irrigation timing |
+| Pipeline (ingest → analyze → visualize) | CSV/synthetic → **BigQuery** → **cuDF** aggregation → **Gemini** advice → dashboard |
+| Useful output | Dashboard, risk score, alerts, recommendations |
+| **Acceleration evidence** | **NVIDIA RAPIDS cuDF: 22.58x average, 49.8x on GroupBy** over 500K rows (T4 GPU) |
+| Two+ technologies | **BigQuery + Looker + NVIDIA RAPIDS** (three) |
 
 ---
 
-## 🏗️ Architecture
+## 🧱 Tech stack
+
+**Frontend** — Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS v4, Recharts, Framer Motion, Lucide icons. Optional PWA (opt-in). Supabase JS for auth.
+
+**Backend** — FastAPI (Python 3.11+), modular multi-agent design, Google Gemini API (`gemini-2.5-flash` for text, vision, and reasoning slots).
+
+**Data & analytics** — Google BigQuery (dataset `krisisar_analytics`), Looker Studio dashboard, NVIDIA RAPIDS cuDF benchmark (Google Colab T4).
+
+**External APIs** — Open-Meteo (weather), BigDataCloud (reverse geocoding), data.gov.in (optional real datasets).
+
+---
+
+## 🤖 Multi-agent backend
+
+Six focused agents, each a Python module under `backend/agents/`:
+
+| Agent | Purpose | Powered by |
+|---|---|---|
+| Image Diagnosis | Crop disease detection from images | Gemini Vision |
+| Weather Intelligence | Forecast + disease-risk signals | Open-Meteo |
+| Risk Prediction | Farm risk score (0–100) | Weather + disease + crop-health factors |
+| Recommendation | Actionable decision cards | Gemini |
+| Government Scheme | Scheme eligibility / guidance | RAG-style matching |
+| Analytics | BigQuery logging + aggregation queries | BigQuery |
+
+---
+
+## 📊 Data pipeline
 
 ```
-┌─────────────────────────────────────────────────┐
-│          Next.js 15 Frontend (Vercel)           │
-│  React 19 • TypeScript • Tailwind v4 • PWA      │
-└────────────────┬────────────────────────────────┘
-                 │
-                 ├─► Next.js API Routes (BFF)
-                 │
-┌────────────────▼────────────────────────────────┐
-│      FastAPI + Google ADK (Render/Railway)      │
-│           Multi-Agent AI System                  │
-├─────────────────────────────────────────────────┤
-│ • Image Diagnosis Agent (Gemini Vision)         │
-│ • Weather Intelligence Agent                     │
-│ • Risk Prediction Agent                          │
-│ • Recommendation Agent                           │
-│ • Government Scheme Agent (RAG)                  │
-│ • Market Intelligence Agent                      │
-│ • Analytics Agent                                │
-└────┬────────────────┬───────────────┬───────────┘
-     │                │               │
-     ▼                ▼               ▼
-┌─────────┐   ┌──────────────┐  ┌────────────┐
-│Supabase │   │   BigQuery   │  │  Firebase  │
-│PostgreSQL│   │  Analytics   │  │  Storage   │
-└─────────┘   └──────┬───────┘  └────────────┘
-                     │
-                     ▼
-              ┌─────────────┐
-              │Looker Studio│
-              │  Dashboard  │
-              └─────────────┘
+Synthetic 500K farm records (analytics/generate_synthetic_data.py)
+        │  CSV
+        ▼
+   BigQuery  ── dataset: krisisar_analytics
+        │        tables:  farm_perf_raw, diagnosis_events, risk_score_events,
+        │                 weather_events, chat_sessions, user_activity, farm_performance
+        │        views:   disease_heatmap, top_diseases, risk_distribution,
+        │                 daily_activity, farmer_engagement
+        │
+        ├──► Looker Studio dashboard  (yield by crop, risk by state, crop mix, scorecards)
+        │
+        ├──► FastAPI /api/v1/analytics/farm-insights  ──►  in-app Analytics dashboard
+        │
+        └──► NVIDIA RAPIDS cuDF benchmark (Colab T4)  ──►  22.58x avg speedup
 ```
 
----
-
-## 🤖 Multi-Agent System (Google ADK)
-
-| Agent | Purpose | Technology |
-|-------|---------|------------|
-| **Image Diagnosis** | Crop disease detection | Gemini Vision |
-| **Weather Intelligence** | Weather + disease risk | Open-Meteo API |
-| **Risk Prediction** | Farm risk scoring (0-100) | ML + Historical Data |
-| **Recommendation** | Actionable decisions | Gemini 2.5 Pro |
-| **Government Scheme** | Scheme eligibility | RAG + Vector DB |
-| **Market Intelligence** | Mandi prices + trends | Agmarknet API |
-| **Analytics** | Data storage + insights | BigQuery |
+The in-app Analytics page (`/dashboard/analytics`) reads `farm-insights`, which aggregates the 500K-row `farm_perf_raw` table into three live charts: **average yield by crop**, **average risk by state**, and **disease spread across farms**.
 
 ---
 
-## 🛠️ Tech Stack
+## 🚀 Getting started
+
+### Prerequisites
+- Node.js 22+, pnpm
+- Python 3.11+
+- Google Gemini API key
+- A Google Cloud project with BigQuery + a service-account JSON
 
 ### Frontend
-- **Framework**: Next.js 15 (App Router)
-- **UI Library**: React 19
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS v4
-- **Components**: shadcn/ui
-- **State Management**: TanStack Query
-- **Forms**: React Hook Form + Zod
-- **Animation**: Framer Motion
-- **Charts**: Recharts
-- **i18n**: next-intl (5 languages)
-- **PWA**: next-pwa
-- **Icons**: Lucide React
+```bash
+cd frontend
+pnpm install
+# create .env.local (see below)
+pnpm dev            # http://localhost:3000
+```
 
-### Backend (AI Layer)
-- **Framework**: FastAPI
-- **Language**: Python 3.11+
-- **AI SDK**: Google ADK
-- **Models**: Gemini 2.5 Flash, Gemini 2.5 Pro, Gemini Vision
-- **Task Queue**: Redis (Upstash Free)
+### Backend
+```bash
+cd backend
+python -m venv venv
+venv\Scripts\activate        # Windows
+pip install -r requirements.txt
+# create .env (see below)
+python main.py               # http://localhost:8000  (docs at /docs)
+```
 
-### Backend (BFF)
-- **Next.js Route Handlers** (TypeScript)
-- **Authentication**: Better Auth
-- **Validation**: Zod
+### BigQuery (one-time)
+1. Create dataset `krisisar_analytics`.
+2. Run `database/bigquery/schema.sql` to create tables + views.
+3. Load the bulk dataset:
+   ```bash
+   python analytics/generate_synthetic_data.py     # -> farm_performance_500k.csv
+   ```
+   Upload the CSV in the BigQuery console as table `farm_perf_raw` (CSV, auto-detect schema).
 
-### Database
-- **Primary DB**: Supabase PostgreSQL (Free)
-- **ORM**: Prisma
-- **Analytics**: BigQuery (Free Tier)
-- **Storage**: Firebase Storage (Free)
-
-### GPU Analytics
-- **NVIDIA RAPIDS cuDF** (Google Colab T4 GPU)
-- **Benchmarking**: Pandas vs cuDF on 500K records
-
-### Maps
-- **Leaflet + OpenStreetMap** (FREE)
-
-### Deployment
-- **Frontend**: Vercel (Free)
-- **Backend**: Render / Railway (Free)
-- **Database**: Supabase (Free)
+### NVIDIA RAPIDS benchmark
+Upload `analytics/rapids_benchmark.ipynb` + the CSV to Google Colab, set runtime to **T4 GPU**, and Run all. (On current Colab, install with `cudf-cu12`.)
 
 ---
 
-## 📁 Project Structure
+## 🔑 Environment variables
+
+**frontend/.env.local**
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+# NEXT_PUBLIC_ENABLE_PWA=true   # optional, PWA is off unless set
+```
+
+**backend/.env**
+```env
+GOOGLE_API_KEY=your_gemini_api_key
+DATABASE_URL=your_postgres_url            # or a placeholder if unused
+BIGQUERY_PROJECT_ID=krisisar
+BIGQUERY_DATASET_ID=krisisar_analytics
+BIGQUERY_FARM_TABLE=farm_perf_raw
+BIGQUERY_CREDENTIALS_PATH=./service-account.json
+OPEN_METEO_API_URL=https://api.open-meteo.com/v1/forecast
+```
+
+> ⚠️ `service-account.json` is a secret credential. It is gitignored and must never be committed.
+
+---
+
+## 📁 Project structure
 
 ```
 krisisar-ai/
-├── frontend/                    # Next.js 15 Frontend
-│   ├── app/                     # App Router
-│   │   ├── (auth)/
-│   │   ├── (dashboard)/
-│   │   ├── api/                 # Next.js API Routes (BFF)
-│   │   ├── layout.tsx
-│   │   └── page.tsx             # Landing Page
-│   ├── components/              # React Components
-│   │   ├── ui/                  # shadcn/ui components
-│   │   ├── features/            # Feature-specific components
-│   │   └── shared/              # Shared components
-│   ├── features/                # Feature modules
-│   │   ├── diagnosis/
-│   │   ├── weather/
-│   │   ├── risk-score/
-│   │   ├── recommendations/
-│   │   ├── schemes/
-│   │   ├── chat/
-│   │   └── analytics/
-│   ├── hooks/                   # Custom React hooks
-│   ├── lib/                     # Utility libraries
-│   ├── services/                # API services
-│   ├── types/                   # TypeScript types
-│   ├── public/                  # Static assets
-│   └── messages/                # i18n translations
-│
-├── backend/                     # FastAPI + Google ADK Backend
-│   ├── agents/                  # Multi-agent system
-│   │   ├── image_diagnosis.py
-│   │   ├── weather_intelligence.py
-│   │   ├── risk_prediction.py
-│   │   ├── recommendation.py
-│   │   ├── government_scheme.py
-│   │   ├── market_intelligence.py
-│   │   └── analytics.py
-│   ├── api/                     # FastAPI routes
-│   ├── models/                  # Pydantic models
-│   ├── services/                # Business logic
-│   ├── utils/                   # Utilities
-│   ├── config.py                # Configuration
-│   └── main.py                  # FastAPI app entry
-│
-├── database/
-│   ├── prisma/
-│   │   └── schema.prisma        # Database schema
-│   └── bigquery/
-│       └── schema.sql           # BigQuery tables
-│
-├── analytics/
-│   ├── rapids_benchmark.ipynb   # NVIDIA RAPIDS cuDF benchmark
-│   └── generate_synthetic_data.py
-│
-├── docs/
-│   ├── API.md                   # API documentation
-│   ├── ARCHITECTURE.md          # System architecture
-│   ├── DEPLOYMENT.md            # Deployment guide
-│   ├── DEMO_SCRIPT.md           # Judge demo script
-│   └── PITCH_DECK_OUTLINE.md   # Pitch deck outline
-│
-├── .env.example
-├── .gitignore
-├── docker-compose.yml           # Local development
+├── frontend/                 # Next.js 15 app
+│   ├── app/                  # landing, dashboard + 6 feature pages, signup, demo, docs
+│   ├── components/           # FeatureShell, shared UI
+│   └── lib/                  # api client, supabase client, utils
+├── backend/                  # FastAPI + agents
+│   ├── agents/               # 6 AI agents
+│   ├── api/routes/           # 8 route groups
+│   ├── config.py
+│   └── main.py
+├── database/bigquery/        # schema.sql (tables + views)
+├── analytics/                # synthetic data generator + RAPIDS benchmark notebook
+├── docs/                     # ARCHITECTURE.md
 └── README.md
 ```
 
 ---
 
-## 🚦 Getting Started
+## 📈 Results
 
-### Prerequisites
-
-- **Node.js** 22 LTS
-- **Python** 3.11+
-- **pnpm** (or npm/yarn)
-- **Google Cloud Account** (Gemini API access)
-- **Supabase Account**
-
-### Installation
-
-#### 1. Clone Repository
-
-```bash
-git clone https://github.com/yourusername/krisisar-ai.git
-cd krisisar-ai
-```
-
-#### 2. Frontend Setup
-
-```bash
-cd frontend
-pnpm install
-cp .env.example .env.local
-# Add your API keys to .env.local
-pnpm dev
-```
-
-Frontend runs at: `http://localhost:3000`
-
-#### 3. Backend Setup (Python Virtual Environment)
-
-```bash
-cd backend
-python -m venv venv
-# Activate virtual environment:
-# Windows: venv\Scripts\activate
-# Mac/Linux: source venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env
-# Add your API keys to .env
-uvicorn main:app --reload
-```
-
-Backend runs at: `http://localhost:8000`
-
-#### 4. Database Setup
-
-```bash
-cd frontend
-npx prisma generate
-npx prisma db push
-```
-
-#### 5. BigQuery Setup
-
-- Create BigQuery dataset: `krisisar_analytics`
-- Run `database/bigquery/schema.sql`
-
----
-
-## 🌍 Environment Variables
-
-### Frontend (.env.local)
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8000
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_key
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=optional
-```
-
-### Backend (.env)
-
-```env
-GOOGLE_API_KEY=your_gemini_api_key
-DATABASE_URL=your_supabase_postgres_url
-REDIS_URL=your_upstash_redis_url
-BIGQUERY_PROJECT_ID=your_gcp_project_id
-BIGQUERY_CREDENTIALS_PATH=path/to/service-account.json
-OPEN_METEO_API_URL=https://api.open-meteo.com/v1/forecast
-```
-
----
-
-## 📊 NVIDIA RAPIDS Benchmark
-
-Generate 500K synthetic farm records and benchmark Pandas vs cuDF:
-
-```bash
-cd analytics
-# Use Google Colab with T4 GPU (free)
-# Upload rapids_benchmark.ipynb
-# Run all cells
-```
-
-**Expected Results:**
-- Pandas: ~5-10 seconds
-- cuDF: ~0.5-1 second
-- **Speedup: 10-20x**
-
----
-
-## 🎨 UI/UX Design Principles
-
-- **Google Material Design** inspired
-- **Large touch targets** (farmer-friendly)
-- **Minimal text**, maximum visual communication
-- **Dark & Light mode**
-- **Responsive** (mobile-first)
-- **Rounded cards** with subtle shadows
-- **Smooth animations** (Framer Motion)
-- **High contrast** for outdoor visibility
-
----
-
-## 🌐 Multilingual Support
-
-- 🇬🇧 English
-- 🇮🇳 Hindi (हिंदी)
-- 🇮🇳 Marathi (मराठी)
-- 🇮🇳 Tamil (தமிழ்)
-- 🇮🇳 Telugu (తెలుగు)
-
-Powered by `next-intl` with dynamic language switching.
-
----
-
-## 📱 PWA Features
-
-- ✅ Installable on mobile/desktop
-- ✅ Offline mode with service worker
-- ✅ Background sync
-- ✅ Push notifications (alerts)
-- ✅ Add to home screen
-
----
-
-## 🧪 Testing
-
-```bash
-# Frontend
-cd frontend
-pnpm test
-
-# Backend
-cd backend
-pytest
-```
-
----
-
-## 🚀 Deployment
-
-### Frontend (Vercel)
-
-```bash
-cd frontend
-vercel --prod
-```
-
-### Backend (Render/Railway)
-
-```bash
-cd backend
-# Connect GitHub repo to Render/Railway
-# Set environment variables
-# Deploy
-```
-
-### Database (Supabase)
-
-Already cloud-hosted (free tier).
-
----
-
-## 📈 Analytics & Monitoring
-
-- **BigQuery**: Real-time analytics ingestion
-- **Looker Studio**: Visual dashboards
-  - Disease heatmap
-  - Risk distribution
-  - Farmer usage metrics
-  - Predictive trends
-
----
-
-## 🏆 Hackathon Deliverables
-
-✅ Complete production-ready codebase  
-✅ System architecture diagram  
-✅ Database schema + ER diagram  
-✅ API documentation  
-✅ Multi-agent AI system (Google ADK)  
-✅ RAPIDS cuDF benchmark (500K records)  
-✅ BigQuery analytics integration  
-✅ Looker Studio dashboard design  
-✅ Multilingual PWA (5 languages)  
-✅ Landing page  
-✅ README, deployment guide, demo script  
-✅ Pitch deck outline  
-
----
-
-## 🎤 Demo Script
-
-See [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md)
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Please follow:
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open Pull Request
+- **500,000** farm records analyzed in BigQuery
+- **NVIDIA RAPIDS cuDF**: 22.58x average speedup (49.8x GroupBy, 15.1x load) vs pandas on a T4 GPU
+- Live Looker Studio dashboard + in-app analytics, both served from BigQuery
 
 ---
 
 ## 📄 License
 
-MIT License - see [LICENSE](LICENSE)
-
----
-
-## 👥 Team
-
-Built for **Google Gen AI Academy Cohort 2 - Decision Intelligence Hackathon**
-
----
-
-## 🙏 Acknowledgments
-
-- Google Gemini AI
-- NVIDIA RAPIDS
-- Supabase
-- Vercel
-- Open-Meteo
-- PlantVillage Dataset
-- data.gov.in
-
----
-
-## 📞 Contact
-
-For questions or support, reach out via GitHub Issues.
-
----
-
-**⭐ If you find KrisiSar AI useful, please star this repository!**
+MIT.
