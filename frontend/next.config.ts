@@ -40,10 +40,16 @@ const nextConfig: NextConfig = {
   },
 };
 
-// PWA configuration
+// PWA configuration.
+// PWA is now OPT-IN: it stays off everywhere (dev + production) unless you
+// explicitly set NEXT_PUBLIC_ENABLE_PWA=true. This avoids the service-worker
+// caching surprises during development and demos. Turn it on later once the
+// app is stable if you want installable/offline behaviour.
+const enablePWA = process.env.NEXT_PUBLIC_ENABLE_PWA === "true";
+
 const pwaConfig = withPWA({
   dest: "public",
-  disable: process.env.NODE_ENV === "development",
+  disable: !enablePWA,
   register: true,
   skipWaiting: true,
   runtimeCaching: [
