@@ -138,20 +138,24 @@ export default function HomePage() {
           
           <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-6">
             <SolutionCard
-              title="✅ One Platform"
+              badge="Live"
+              title="One Platform"
               description="All information unified. Diagnosis + Weather + Risk + Schemes + Chat."
             />
             <SolutionCard
-              title="✅ Actionable Decisions"
+              badge="Live"
+              title="Actionable Decisions"
               description="Not just data. Clear YES/NO answers. 'Spray tomorrow morning.'"
             />
             <SolutionCard
-              title="✅ Multilingual"
-              description="5 languages. Voice assistant. Works for every farmer."
+              badge="Roadmap"
+              title="Multilingual"
+              description="Built to support 5 Indian languages and voice — on our near-term roadmap."
             />
             <SolutionCard
-              title="✅ Works Offline"
-              description="PWA app. Cached data. Sync when online. 2G compatible."
+              badge="Roadmap"
+              title="Offline-First"
+              description="Progressive Web App with cached data for low-connectivity areas — planned next."
             />
           </div>
         </div>
@@ -252,10 +256,33 @@ function ProblemCard({ title, description }: { title: string; description: strin
   );
 }
 
-function SolutionCard({ title, description }: { title: string; description: string }) {
+function SolutionCard({
+  title,
+  description,
+  badge,
+}: {
+  title: string;
+  description: string;
+  badge: "Live" | "Roadmap";
+}) {
+  const isLive = badge === "Live";
   return (
     <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-6 shadow-sm">
-      <h3 className="font-bold text-lg mb-2 text-green-700 dark:text-green-400">{title}</h3>
+      <div className="flex items-center gap-2 mb-2">
+        <h3 className="font-bold text-lg text-green-700 dark:text-green-400">
+          {isLive ? "✅ " : ""}
+          {title}
+        </h3>
+        <span
+          className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+            isLive
+              ? "bg-green-600 text-white"
+              : "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300"
+          }`}
+        >
+          {isLive ? "Live" : "Coming soon"}
+        </span>
+      </div>
       <p className="text-gray-700 dark:text-gray-300">{description}</p>
     </div>
   );
