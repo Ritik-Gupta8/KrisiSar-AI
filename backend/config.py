@@ -27,6 +27,11 @@ class Settings(BaseSettings):
     BIGQUERY_PROJECT_ID: str
     BIGQUERY_DATASET_ID: str = "krisisar_analytics"
     BIGQUERY_CREDENTIALS_PATH: Optional[str] = None
+    # Table that holds the bulk farm-performance dataset (the 500K synthetic
+    # rows, or real data.gov.in rows). Loaded via CSV auto-detect, so `location`
+    # is a STRING containing JSON — the queries use JSON_EXTRACT_SCALAR which
+    # works on STRING columns too. Override in .env if you named it differently.
+    BIGQUERY_FARM_TABLE: str = "farm_perf_raw"
     
     # External APIs
     OPEN_METEO_API_URL: str = "https://api.open-meteo.com/v1/forecast"
