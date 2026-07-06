@@ -70,6 +70,10 @@ gcp-*.json
 .ipynb_checkpoints/
 *.ipynb_checkpoints
 
+# Generated / large data (synthetic benchmark dataset — regenerate with the script)
+farm_performance_*.csv
+rapids_benchmark_results.png
+
 # Temp files
 *.tmp
 *.temp
