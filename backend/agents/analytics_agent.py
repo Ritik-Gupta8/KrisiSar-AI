@@ -125,6 +125,76 @@ class AnalyticsAgent:
                 "error": str(e)
             }
     
+    async def get_farm_insights(self) -> Dict[str, Any]:
+        """
+        Aggregate insights over the bulk farm-performance dataset (the 500K
+        synthetic rows loaded into BigQuery). Powers the main Analytics
+        dashboard so it shows real charts immediately, without waiting for
+        live user events to accumulate.
+
+        Returns three aggregations:
+          - yield_by_crop:    avg yield + farm count per crop
+          - risk_by_state:    avg risk score per state (from location JSON)
+          - disease_spread:   farm count grouped by number of diseases
+        """
+
+        if not self.client:
+            return {"success": False, "error": "BigQuery not configured"}
+
+        table = f"{self.dataset_id}.{settings.BIGQUERY_FARM_TABLE}"
+
+        try:
+            yield_by_crop = [
+                dict(row)
+                for row in self.client.query(f"""
+                    SELECT
+                        crop_type,
+                        ROUND(AVG(yield_kg), 2) AS avg_yield,
+                        COUNT(*) AS farms
+                    FROM `{table}`
+                    GROUP BY crop_type
+                    ORDER BY avg_yield DESC
+                """)
+            ]
+
+            risk_by_state = [
+                dict(row)
+                for row in self.client.query(f"""
+                    SELECT
+                        JSON_EXTRACT_SCALAR(location, '$.state') AS state,
+                        ROUND(AVG(avg_risk_score), 1) AS avg_risk,
+                        COUNT(*) AS farms
+                    FROM `{table}`
+                    GROUP BY state
+                    HAVING state IS NOT NULL
+                    ORDER BY avg_risk DESC
+                """)
+            ]
+
+            disease_spread = [
+                dict(row)
+                for row in self.client.query(f"""
+                    SELECT
+                        diseases_count,
+                        COUNT(*) AS farms
+                    FROM `{table}`
+                    GROUP BY diseases_count
+                    ORDER BY diseases_count
+                """)
+            ]
+
+            return {
+                "success": True,
+                "data": {
+                    "yield_by_crop": yield_by_crop,
+                    "risk_by_state": risk_by_state,
+                    "disease_spread": disease_spread,
+                },
+            }
+
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
     async def get_risk_distribution(self, days: int = 30) -> Dict[str, Any]:
         """Get risk level distribution"""
         
