@@ -50,6 +50,28 @@ async def get_risk_distribution(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.get("/farm-insights")
+async def get_farm_insights():
+    """
+    Aggregated insights over the bulk farm-performance dataset in BigQuery.
+    Powers the main Analytics dashboard (yield by crop, risk by state,
+    disease spread) using the 500K synthetic rows.
+    """
+
+    try:
+        result = await analytics_agent.get_farm_insights()
+
+        if not result["success"]:
+            raise HTTPException(status_code=500, detail=result["error"])
+
+        return JSONResponse(content=result)
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/health")
 async def health_check():
     return {"status": "healthy", "service": "analytics"}
