@@ -33,10 +33,13 @@ class Settings(BaseSettings):
     NASA_POWER_API_URL: Optional[str] = None
     AGMARKNET_API_URL: Optional[str] = None
     
-    # Gemini Configuration
-    GEMINI_MODEL_FLASH: str = "gemini-2.0-flash-exp"
-    GEMINI_MODEL_PRO: str = "gemini-1.5-pro"
-    GEMINI_MODEL_VISION: str = "gemini-2.0-flash-exp"
+    # Gemini Configuration (GA model names — avoid -exp aliases that get retired)
+    # NOTE: gemini-2.5-pro has 0 quota on the free tier, so we use flash for the
+    # "pro" slot too. Switch GEMINI_MODEL_PRO back to gemini-2.5-pro once on a
+    # paid/billing-enabled key for higher-quality reasoning.
+    GEMINI_MODEL_FLASH: str = "gemini-2.5-flash"
+    GEMINI_MODEL_PRO: str = "gemini-2.5-flash"
+    GEMINI_MODEL_VISION: str = "gemini-2.5-flash"
     GEMINI_TEMPERATURE: float = 0.7
     GEMINI_MAX_TOKENS: int = 8192
     
@@ -52,9 +55,22 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
     
+    # Firebase Storage (optional)
+    FIREBASE_API_KEY: Optional[str] = None
+    FIREBASE_AUTH_DOMAIN: Optional[str] = None
+    FIREBASE_PROJECT_ID: Optional[str] = None
+    FIREBASE_STORAGE_BUCKET: Optional[str] = None
+    FIREBASE_MESSAGING_SENDER_ID: Optional[str] = None
+    FIREBASE_APP_ID: Optional[str] = None
+    
+    # Auth (optional, matches .env.example naming)
+    AUTH_SECRET: Optional[str] = None
+    AUTH_URL: Optional[str] = None
+    
     class Config:
         env_file = ".env"
         case_sensitive = True
+        extra = "ignore"  # tolerate future/optional keys in .env without crashing
 
 # Initialize settings
 settings = Settings()
