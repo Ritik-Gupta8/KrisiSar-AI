@@ -7,20 +7,20 @@ const docs = [
   {
     icon: BookOpen,
     title: "Architecture",
-    description: "System design, multi-agent AI, and data flow.",
+    description: "System design, multi-agent AI, data pipeline, and GPU acceleration.",
     file: "docs/ARCHITECTURE.md",
   },
   {
     icon: Code2,
-    title: "API Reference",
-    description: "All backend endpoints with request/response examples.",
-    file: "docs/API.md",
+    title: "Project Overview",
+    description: "Features, tech stack, and how the data pipeline fits together.",
+    file: "README.md",
   },
   {
     icon: Rocket,
-    title: "Deployment Guide",
-    description: "Step-by-step deploy to Vercel, Render, and Supabase.",
-    file: "docs/DEPLOYMENT.md",
+    title: "Live API",
+    description: "Interactive FastAPI docs (Swagger UI) at /docs on the backend.",
+    file: "backend: /docs",
   },
 ];
 
