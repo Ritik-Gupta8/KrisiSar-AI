@@ -98,5 +98,10 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=port,
         reload=True,
-        log_level="info"
+        # Only watch our own source folders. We deliberately do NOT watch the
+        # project root, because venv/ lives there and (especially inside OneDrive,
+        # which constantly re-syncs library files) it triggers an endless reload
+        # loop. Trade-off: edits to main.py / config.py need a manual restart.
+        reload_dirs=["agents", "api", "models", "services", "utils"],
+        log_level="info",
     )
